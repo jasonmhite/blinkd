@@ -2,7 +2,18 @@ from blinkstick import blinkstick
 
 STICK = blinkstick.find_first()
 
-class Command(object):
+COMMANDS = {}
+
+class CommandFactory(type):
+    def __call__(cls, *args, **kwargs):
+        C = type.__call__(cls, *args, **kwargs)
+
+        global COMMANDS
+        COMMANDS[C.handler.__name__] = C
+
+        return C
+
+class Command(object, metaclass=CommandFactory):
     def __init__(self, handler):
         self.handler = handler
 
@@ -23,24 +34,34 @@ def set_random():
 
 @Command
 def set_color(r, g, b):
-    STICK.set_color(red=r, green=g, blue=b)
+    STICK.set_color(red=int(r), green=int(g), blue=int(b))
 
 @Command
 def pulse(r, g, b, repeats, duration, steps):
     STICK.pulse(
-        red=r,
-        green=g,
-        blue=b,
-        repeats=repeats,
-        duration=duration,
-        steps=steps,
+        red=int(r),
+        green=int(g),
+        blue=int(b),
+        repeats=int(repeats),
+        duration=int(duration),
+        steps=int(steps),
     )
 
 @Command
 def morph(r, g, b, duration, steps):
-    STICK.morph(red=r, green=g, blue=b, duration=duration, steps=steps)
+    STICK.morph(
+        red=int(r),
+        green=int(g),
+        blue=int(b),
+        duration=int(duration),
+        steps=int(steps),
+    )
 
 @Command
 def get_color():
     col = STICK.get_color()
     return col
+
+if __name__ == '__main__':
+    set_random.run()
+    print(COMMANDS)
