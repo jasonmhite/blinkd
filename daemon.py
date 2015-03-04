@@ -14,24 +14,32 @@ lock = asyncio.Lock(loop=loop)
 
 @asyncio.coroutine
 def handle_command(reader, writer):
-    data = yield from reader.read(100)
-    args = data.decode().strip().split(" ")
-    cmd = args.pop(0)
+    try:
+        data = yield from reader.read(100)
+        args = data.decode().strip().split(" ")
+        cmd = args.pop(0)
 
-    print("Command: {}".format(cmd))
-    print("Args: {}".format(args))
+        print("Command: {}".format(cmd))
+        print("Args: {}".format(args))
 
-    with (yield from lock):
-        r = COMMANDS[cmd].run(*args)
+        with (yield from lock):
+            r = COMMANDS[cmd].run(*args)
 
-    if r is None:
-        writer.write("OK".encode())
-    else:
-        writer.write(str(r).encode())
+        if r is None:
+            writer.write("OK".encode())
+        else:
+            writer.write((str(r) + "\n").encode())
 
-    yield from writer.drain()
+        yield from writer.drain()
 
-    writer.close()
+    except Exception as e:
+        r = "ERR: {}\n".format(e)
+        writer.write(r.encode())
+
+        yield from writer.drain()
+
+    finally:
+        writer.close()
 
 coro = asyncio.start_server(
     handle_command,
