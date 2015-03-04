@@ -10,7 +10,6 @@ SOCKET_ADDRESS = '127.0.0.1'
 SOCKET_PORT = 59993
 
 loop = asyncio.get_event_loop()
-#coro = asyncio.start_server(handle_echo, '127.0.0.1', 8888, loop=loop)
 lock = asyncio.Lock(loop=loop)
 
 @asyncio.coroutine
@@ -34,7 +33,6 @@ def handle_command(reader, writer):
 
     writer.close()
 
-#coro = asyncio.start_unix_server(handle_command, SOCKET_ADDRESS, loop=loop)
 coro = asyncio.start_server(
     handle_command,
     SOCKET_ADDRESS,
