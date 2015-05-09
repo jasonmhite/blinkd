@@ -1,4 +1,5 @@
 from blinkstick import blinkstick
+from time import sleep
 
 STICK = blinkstick.find_first()
 
@@ -19,7 +20,12 @@ class Command(object, metaclass=CommandFactory):
         self.__doc__ = handler.__doc__
 
     def run(self, *args):
-        return self.handler(*args)
+        r, g, b = STICK.get_color()
+        try:
+            return self.handler(*args)
+        except Exception:
+            STICK.morph(red=r, green=g, blue=b, duration=500, steps=16)
+            raise
 
     @classmethod
     def __call__(cls, handler):
@@ -84,6 +90,12 @@ def help():
 def help_for(cmd):
     """Print help for a command. Args: cmd"""
     return COMMANDS[cmd].__doc__
+
+@Command
+def test_fail():
+    """Always fail. Args: None"""
+    STICK.set_color(red=16, green=0, blue=0)
+    raise Exception('Test Failure')
 
 if __name__ == '__main__':
     set_random.run()
