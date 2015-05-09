@@ -89,7 +89,10 @@ def help():
 @Command
 def help_for(cmd):
     """Print help for a command. Args: cmd"""
-    return COMMANDS[cmd].__doc__
+    try:
+        return COMMANDS[cmd].__doc__
+    except KeyError:
+        return "Command {} not found".format(cmd)
 
 @Command
 def test_fail():

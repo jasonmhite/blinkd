@@ -23,7 +23,10 @@ def handle_command(reader, writer):
         print("Args: {}".format(args))
 
         with (yield from lock):
-            r = COMMANDS[cmd].run(*args)
+            try:
+                r = COMMANDS[cmd].run(*args)
+            except KeyError:
+                raise Exception('Command {} not found'.format(cmd))
 
         if r is None:
             writer.write("OK".encode())
