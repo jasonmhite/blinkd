@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import asyncio
 import os
 
@@ -6,7 +7,7 @@ import os
 
 from protocol import COMMANDS
 
-SOCKET_ADDRESS = '127.0.0.1'
+SOCKET_ADDRESS = '0.0.0.0'
 SOCKET_PORT = 59993
 
 loop = asyncio.get_event_loop()
