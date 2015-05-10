@@ -49,6 +49,7 @@ def set_color(r, g, b):
 @Command
 def pulse(r, g, b, repeats, duration, steps):
     """Pulse LED. Args: r g b repeats duration steps"""
+    r, g, b = map(int, STICK.get_color())
     STICK.pulse(
         red=int(r),
         green=int(g),
@@ -57,6 +58,9 @@ def pulse(r, g, b, repeats, duration, steps):
         duration=int(duration),
         steps=int(steps),
     )
+
+    # Restore original color
+    STICK.set_color(red=r, blue=b, green=g)
 
 @Command
 def morph(r, g, b, duration, steps):
