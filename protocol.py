@@ -100,6 +100,33 @@ def test_fail():
     STICK.set_color(red=16, green=0, blue=0)
     raise Exception('Test Failure')
 
+@Command
+def set_total_brightness(pct):
+    """Set current brightness to portion of max while maintaining color and
+    set maximum for any single color to be under this limit. Because of the way
+    the maximum brightness is enforced, it is possible to subsequently set to a
+    higher total power by setting 2 or more colors to the max. Args: pct"""
+    pct = int(pct)
+    if pct > 100 or pct < 0:
+        raise ValueError("Invalid percentage {}".format(pct))
+
+    r, g, b = map(int, STICK.get_color())
+    target_level = round(pct * 255 / 100)
+    total = r + g + b
+
+    r, g, b = [round(255 * i / total) for i in (r, g, b)]
+
+    STICK.set_max_rgb_value(target_level)
+    STICK.set_color(red=r, green=g, blue=b)
+
+@Command
+def get_total_brightness():
+    """Get current total brightness as percentage of maximum. Args: None"""
+    r, g, b = map(int, STICK.get_color())
+
+    cb = 100 * (r + g + b) / (3. * 255)
+    return cb
+
 if __name__ == '__main__':
     set_random.run()
     print(COMMANDS)
