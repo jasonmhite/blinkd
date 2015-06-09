@@ -8,7 +8,7 @@ import os
 from protocol import COMMANDS
 
 SOCKET_ADDRESS = '0.0.0.0'
-SOCKET_PORT = 59993
+SOCKET_PORT = 9001
 
 loop = asyncio.get_event_loop()
 lock = asyncio.Lock(loop=loop)
